@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sentinel — Infrastructure monitoring without the bloat</title>
+  <meta name="description" content="Open-source monitoring for Docker, databases, and APIs. Lightweight Rust agent. Built for teams that ship fast." />
+  <meta property="og:title" content="Sentinel — Infrastructure monitoring without the bloat" />
+  <meta property="og:description" content="Open-source monitoring for Docker, databases, and APIs. Built for teams that ship fast." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#f5f3ee" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='10' y='10' width='12' height='12' rx='3' fill='%23f5a524'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a href="#top" class="brand">
+        <span class="brand-mark"></span>
+        SENTINEL
+      </a>
+      <nav class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#why">Why</a>
+        <button class="theme-btn" id="themeBtn" aria-label="Toggle theme" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <div class="container">
+        <div class="eyebrow">
+          <span class="dot"></span>
+          <span>Public beta · launching this month</span>
+        </div>
+
+        <h1>
+          Watch every container,<br />
+          database, and endpoint
+          <span class="muted">— in one place.</span>
+        </h1>
+
+        <p class="lede">
+          Monitoring built for teams that ship fast and don't want to babysit Datadog.
+          Lightweight Rust agent, plugin-based core, one dashboard for everything.
+        </p>
+
+        <form class="form" data-waitlist data-typed-placeholder action="#" method="POST" novalidate>
+          <div class="form-row">
+            <input type="email" name="email" id="heroEmail" placeholder="you@company.com" required autocomplete="email" aria-label="Email" />
+            <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <button type="submit">Join waitlist <span aria-hidden="true">→</span></button>
+          </div>
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAADDkn7R-dwRwWMcH" data-size="flexible"></div>
+        </form>
+
+        <div class="form-meta">
+          <span><strong class="count" id="counter">0</strong> engineers in line</span>
+          <span class="sep">·</span>
+          <span>No spam. One launch email.</span>
+          <span class="sep">·</span>
+          <span class="kbd-hint">press <kbd>/</kbd> to focus</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Live demo ===== -->
+    <section class="demo">
+      <div class="container">
+        <div class="demo-grid">
+          <article class="panel reveal">
+            <header class="panel-head">
+              <span class="panel-title">Live activity</span>
+              <span class="live-dot">streaming</span>
+            </header>
+            <div class="feed" id="feed" aria-live="polite"></div>
+          </article>
+
+          <article class="panel reveal">
+            <header class="panel-head">
+              <span class="panel-title">At a glance</span>
+              <span class="live-dot">live</span>
+            </header>
+            <ul class="stats">
+              <li class="stat">
+                <span class="stat-label">Health</span>
+                <div class="health-bar" id="healthBar">
+                  <span class="on"></span><span class="on"></span><span class="on"></span>
+                  <span class="on"></span><span class="on"></span><span></span><span></span>
+                </div>
+              </li>
+              <li class="stat">
+                <span class="stat-label">Containers up</span>
+                <div class="stat-value tabular">
+                  <span id="containers">47</span><span class="unit">/52</span>
+                </div>
+              </li>
+              <li class="stat">
+                <span class="stat-label">P95 latency</span>
+                <div class="stat-value tabular">
+                  <span id="latency">89</span><span class="unit">ms</span>
+                </div>
+                <svg class="sparkline" id="sparkline" viewBox="0 0 200 32" preserveAspectRatio="none" aria-hidden="true">
+                  <path id="sparkPath" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"></path>
+                  <path id="sparkFill" fill="currentColor" opacity="0.08"></path>
+                </svg>
+              </li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Pillars ===== -->
+    <section id="how" class="bordered">
+      <div class="container">
+        <h2 class="reveal">Three things, one dashboard.</h2>
+        <p class="section-lede reveal">
+          No configuration sprawl. No agent fleet. Drop in one binary, register the
+          targets you care about, watch them.
+        </p>
+
+        <div class="pillars reveal">
+          <article class="pillar">
+            <div class="pillar-icon mono">01</div>
+            <h3>Docker</h3>
+            <p>Live container events, restarts, OOM detection, CPU and memory metrics from the local socket.</p>
+          </article>
+          <article class="pillar">
+            <div class="pillar-icon mono">02</div>
+            <h3>Databases</h3>
+            <p>Postgres, MySQL, Redis. Connection probes, slow-query insights, replication lag.</p>
+          </article>
+          <article class="pillar">
+            <div class="pillar-icon mono">03</div>
+            <h3>HTTP endpoints</h3>
+            <p>Latency, status codes, error rates. Public APIs or internal services behind a firewall.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Trust / DB access model ===== -->
+    <section id="trust" class="bordered">
+      <div class="container">
+        <h2 class="reveal">Read-only by design.</h2>
+        <p class="section-lede reveal">
+          We don't host your database. We don't ask you to copy data anywhere. For
+          database monitoring, you give us a user with the smallest footprint
+          possible — and we pull metrics, never your data.
+        </p>
+
+        <ol class="trust-list reveal">
+          <li class="trust-item">
+            <span class="trust-num mono">01</span>
+            <div>
+              <h3>One read-only user</h3>
+              <p>
+                You create a user with <code>SELECT</code>-only access to system
+                catalogs and built-in stored procedures —
+                <code>pg_stat_*</code>, <code>INFORMATION_SCHEMA</code>,
+                <code>performance_schema</code>. Nothing else.
+              </p>
+            </div>
+          </li>
+          <li class="trust-item">
+            <span class="trust-num mono">02</span>
+            <div>
+              <h3>No access to your tables</h3>
+              <p>
+                The user can't read application schemas, can't see row data,
+                can't write anything. We literally cannot view what's in your
+                database.
+              </p>
+            </div>
+          </li>
+          <li class="trust-item">
+            <span class="trust-num mono">03</span>
+            <div>
+              <h3>Metrics only — over your network</h3>
+              <p>
+                We pull connection counts, slow-query stats, replication lag,
+                cache hit ratios. The connection runs from your environment to
+                ours; nothing inbound is required.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===== Founder note ===== -->
+    <section id="why" class="bordered">
+      <div class="container">
+        <h2 class="reveal">Why we're building this.</h2>
+        <p class="quote reveal">
+          We were fed up juggling a different tool for every layer — one for container
+          logs, another for database health, a third for uptime checks, a fourth for
+          alerts that never quite worked. So we built Sentinel to put all of it in one
+          place. Watch a Docker container and inspect its logs and crash pattern in the
+          same view. Probe Postgres, MySQL, or Redis for slow queries and connection
+          drops without spinning up a second dashboard. One timeline of what failed,
+          when, and why. Pricing is pay-as-you-go — start free, pay only for what you
+          actually monitor. Some of the building blocks stay open source so you can
+          see exactly what runs on your machines.
+        </p>
+        <div class="signature reveal">— Tanmay & Rakshit, founders</div>
+      </div>
+    </section>
+
+    <!-- ===== CTA ===== -->
+    <section class="cta bordered">
+      <div class="container">
+        <h2>Be the first to try it.</h2>
+        <p>Beta access goes out in batches. Earlier emails get in earlier.</p>
+        <form class="form" data-waitlist action="#" method="POST" novalidate>
+          <div class="form-row">
+            <input type="email" name="email" placeholder="you@company.com" required autocomplete="email" aria-label="Email" />
+            <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <button type="submit">Join waitlist <span aria-hidden="true">→</span></button>
+          </div>
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAADDkn7R-dwRwWMcH" data-size="flexible"></div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container foot">
+      <div class="foot-brand">
+        <span class="brand-mark"></span>
+        <span>SENTINEL<sup>™</sup></span>
+      </div>
+      <nav class="foot-links">
+        <a href="./privacy.html">Privacy</a>
+        <a href="./terms.html">Terms</a>
+        <a href="mailto:tanmaysarkar959@gmail.com">Contact</a>
+      </nav>
+    </div>
+    <div class="container foot-legal">
+      <p>
+        © <span id="footYear">2026</span> Sentinel. All rights reserved.
+        Sentinel and the Sentinel mark are trademarks of the project owner.
+        Other names may be trademarks of their respective owners.
+      </p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
