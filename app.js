@@ -167,7 +167,47 @@
   });
 })();
 
-const WEB3FORMS_KEY = '99bfcb6a-2058-4fbe-8577-73ed4e679445';
+const EMAILJS_PUBLIC_KEY = 'BUF8TbNjYzJSj-8n_';
+const EMAILJS_SERVICE_ID = 'service_hxnem8h';
+const EMAILJS_TEMPLATE_ID = 'template_6shfd4c';
+
+window.addEventListener('load', () => {
+  if (window.emailjs) window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+});
+
+let captchaToken = null;
+const gateEl = document.getElementById('gate');
+const gateWidget = gateEl ? gateEl.querySelector('.cf-turnstile') : null;
+
+function resetCaptcha() {
+  if (window.turnstile && gateWidget) window.turnstile.reset(gateWidget);
+}
+
+function openGate() {
+  if (!gateEl) return;
+  document.body.classList.add('gated');
+  gateEl.classList.remove('passed');
+  resetCaptcha();
+}
+
+function closeGate() {
+  if (!gateEl) return;
+  gateEl.classList.add('passed');
+  document.body.classList.remove('gated');
+}
+
+window.onCaptchaPass = (token) => {
+  captchaToken = token;
+  closeGate();
+};
+
+window.onCaptchaExpired = () => {
+  captchaToken = null;
+};
+
+window.onCaptchaError = () => {
+  captchaToken = null;
+};
 
 (function initForms() {
   const toast = document.getElementById('toast');
@@ -183,32 +223,26 @@ const WEB3FORMS_KEY = '99bfcb6a-2058-4fbe-8577-73ed4e679445';
       e.preventDefault();
       const input = form.querySelector('input[type="email"]');
       const honeypot = form.querySelector('input[name="botcheck"]');
-      const widget = form.querySelector('.cf-turnstile');
-      const token = form.querySelector('input[name="cf-turnstile-response"]')?.value;
       const btn = form.querySelector('button');
       const email = (input.value || '').trim();
       if (!email || !email.includes('@')) { input.focus(); return; }
       if (honeypot && honeypot.checked) return;
-      if (!token) { showToast('Please complete the security check.'); return; }
+      if (!captchaToken) {
+        showToast('Re-verifying — one moment.');
+        openGate();
+        return;
+      }
 
+      captchaToken = null;
       const original = btn.innerHTML;
       btn.disabled = true;
       btn.textContent = 'Adding…';
       try {
-        const res = await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({
-            access_key: WEB3FORMS_KEY,
-            email,
-            subject: 'New Sentinel waitlist signup',
-            from_name: 'Sentinel waitlist',
-            botcheck: '',
-            'cf-turnstile-response': token,
-          }),
+        if (!window.emailjs) throw new Error('emailjs not loaded');
+        await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          email,
+          from_name: email,
         });
-        const json = await res.json().catch(() => ({}));
-        if (!res.ok || !json.success) throw new Error(json.message || 'submit failed');
         input.value = '';
         btn.textContent = '✓ You\'re in';
         showToast(`Thanks — we'll email ${email} when beta opens.`);
@@ -218,7 +252,7 @@ const WEB3FORMS_KEY = '99bfcb6a-2058-4fbe-8577-73ed4e679445';
         btn.disabled = false;
         showToast('Something went wrong. Try again?');
       } finally {
-        if (window.turnstile && widget) window.turnstile.reset(widget);
+        if (window.turnstile && gateWidget) window.turnstile.reset(gateWidget);
       }
     });
   });

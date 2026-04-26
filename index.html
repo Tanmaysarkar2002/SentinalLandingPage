@@ -15,8 +15,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./styles.css" />
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
 </head>
-<body>
+<body class="gated">
+  <div id="gate" class="gate" aria-live="polite">
+    <div class="gate-card">
+      <span class="brand-mark"></span>
+      <div class="gate-brand">SENTINEL</div>
+      <p class="gate-msg">Quick check before you continue…</p>
+      <div class="cf-turnstile"
+           data-sitekey="0x4AAAAAADDkn7R-dwRwWMcH"
+           data-theme="light"
+           data-callback="onCaptchaPass"
+           data-expired-callback="onCaptchaExpired"
+           data-error-callback="onCaptchaError"></div>
+      <p class="gate-foot">Protected by Cloudflare Turnstile</p>
+    </div>
+  </div>
+
   <header class="site-header">
     <div class="container nav">
       <a href="#top" class="brand">
@@ -61,7 +77,6 @@
             <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
             <button type="submit">Join waitlist <span aria-hidden="true">→</span></button>
           </div>
-          <div class="cf-turnstile" data-sitekey="0x4AAAAAADDkn7R-dwRwWMcH" data-size="flexible"></div>
         </form>
 
         <div class="form-meta">
@@ -229,7 +244,6 @@
             <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
             <button type="submit">Join waitlist <span aria-hidden="true">→</span></button>
           </div>
-          <div class="cf-turnstile" data-sitekey="0x4AAAAAADDkn7R-dwRwWMcH" data-size="flexible"></div>
         </form>
       </div>
     </section>
