@@ -170,25 +170,10 @@
 const EMAILJS_PUBLIC_KEY = 'BUF8TbNjYzJSj-8n_';
 const EMAILJS_SERVICE_ID = 'service_hxnem8h';
 const EMAILJS_TEMPLATE_ID = 'template_6shfd4c';
-const EMAILJS_SDK_URL = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
 
-let emailjsReady = null;
-function loadEmailJS() {
-  if (emailjsReady) return emailjsReady;
-  emailjsReady = new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = EMAILJS_SDK_URL;
-    s.async = true;
-    s.onload = () => {
-      if (!window.emailjs) return reject(new Error('emailjs missing after load'));
-      window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-      resolve();
-    };
-    s.onerror = () => reject(new Error('emailjs script failed'));
-    document.head.appendChild(s);
-  });
-  return emailjsReady;
-}
+window.addEventListener('load', () => {
+  if (window.emailjs) window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+});
 
 let captchaToken = null;
 const gateEl = document.getElementById('gate');
@@ -253,7 +238,7 @@ window.onCaptchaError = () => {
       btn.disabled = true;
       btn.textContent = 'Adding…';
       try {
-        await loadEmailJS();
+        if (!window.emailjs) throw new Error('emailjs not loaded');
         await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
           email,
           from_name: email,
