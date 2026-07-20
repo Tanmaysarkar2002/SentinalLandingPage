@@ -111,6 +111,11 @@ body {
   background: var(--accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
 }
+/* StatLense wordmark logo (letters inherit currentColor, dot stays orange) */
+.brand-logo { width: auto; display: block; }
+.brand .brand-logo { height: 28px; }
+.gate .brand-logo { height: 48px; }
+.foot-brand .brand-logo { height: 22px; }
 .nav-links {
   display: flex;
   gap: 28px;

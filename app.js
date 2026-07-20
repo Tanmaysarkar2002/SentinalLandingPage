@@ -6,17 +6,17 @@
 (function initTheme() {
   const btn = document.getElementById('themeBtn');
   if (!btn) return;
-  if (localStorage.getItem('sentinel-theme') === 'dark') {
+  if (localStorage.getItem('statlense-theme') === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark');
   }
   btn.addEventListener('click', () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     if (isDark) {
       document.documentElement.removeAttribute('data-theme');
-      localStorage.setItem('sentinel-theme', 'light');
+      localStorage.setItem('statlense-theme', 'light');
     } else {
       document.documentElement.setAttribute('data-theme', 'dark');
-      localStorage.setItem('sentinel-theme', 'dark');
+      localStorage.setItem('statlense-theme', 'dark');
     }
   });
 })();
